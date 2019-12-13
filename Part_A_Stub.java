@@ -76,6 +76,36 @@ public class GraphAssignment {
 
     public static void findAnyRouteToCity(String source, String destination) {
         // PART-A: Write the required java code to find the possible routes from source to destination
+        Map<String, Boolean> visited = new HashMap<String, Boolean>();
+        Map<String, String> route = new HashMap<String, String>();
+        Queue<String> queue = new LinkedList<String>();
+
+        for (String city : roadMap.getAllCities()) {
+            visited.put(city, false);
+        }
+        visited.put(source, true);
+        queue.add(source);
+        while (!queue.isEmpty()) {
+            String currentCity = queue.remove();
+            for (Road road : roadMap.getAllOutgoingRoads(currentCity)) {
+                if (!visited.get(road.city2)) {
+                    queue.add(road.city2);
+                    visited.put(road.city2, true);
+                    route.put(road.city2, currentCity);
+                }
+            }
+        }
+        if (!visited.get(destination)) {
+            System.out.println("Not Reachable");
+        } else {
+            String currentCity = destination;
+            String path = destination;
+            while (!currentCity.equals(source)) {
+                currentCity = route.get(currentCity);
+                path = currentCity + " -> " + path;
+            }
+            System.out.println(path);
+        }
     }
 
     public static void main(String[] args) {
