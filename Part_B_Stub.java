@@ -105,7 +105,42 @@ public class GraphAssignment {
 
     public static void findSafestRouteToCity(String source, String destination) {
         // PART-B: Write the java code to find the safest route between any two cities
+        Map<String, Integer> safety = new HashMap<String, Integer>();
+        Map<String, String> safetyPath = new HashMap<String, String>();
+        for (String city : roadMap.getAllCities()) {
+            safety.put(city, maxValue);
+        }
 
+        safety.put(source, 0);
+        String nextCity = source;
+        for (Road road : roadMap.getAllOutgoingRoads(nextCity)) {
+            relax(road, safety, safetyPath);
+        }
+        PriorityQueue<String> queue = new PriorityQueue<String>(11, new SafetyComparator(safety));
+        for (String c : roadMap.getAllCities()) {
+            queue.add(c);
+        }
+        while (!queue.isEmpty()) {
+            queue.poll();
+            nextCity = queue.peek();
+            if (nextCity != null) {
+                for (Road road : roadMap.getAllOutgoingRoads(nextCity)) {
+                    relax(road, safety, safetyPath);
+                }
+            }
+        }
+
+        if (safety.get(destination) == maxValue) {
+            System.out.println("Not Recommended");
+        } else {
+            String currentCity = destination;
+            String safestPath = destination;
+            while (!currentCity.equals(source)) {
+                currentCity = safetyPath.get(currentCity);
+                safestPath = currentCity + " -> " + safestPath;
+            }
+            System.out.println(safestPath);
+        }
         //Note:The report values of safety are between 1-100
 
     }
